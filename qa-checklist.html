@@ -1,0 +1,1657 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QA Testing Checklist — Master Coverage Matrix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #0e0e0c;
+    --paper: #f4f1ea;
+    --paper-2: #ebe6db;
+    --accent: #c8451f;
+    --accent-2: #1f4d3f;
+    --muted: #6b6760;
+    --highlight: #f5d547;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--paper); color: var(--ink);
+    line-height: 1.55; font-size: 15px; -webkit-font-smoothing: antialiased;
+    background-image: radial-gradient(circle at 1px 1px, rgba(14,14,12,0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 24px 48px 18px; background: var(--paper);
+    position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px);
+  }
+  .masthead-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+  }
+  .brand-dot {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 8px; transform: translateY(-1px);
+  }
+  .masthead-actions { display: flex; gap: 16px; align-items: center; }
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); display: flex; gap: 24px;
+  }
+  .btn-generate {
+    background: var(--accent); color: var(--paper); border: none;
+    padding: 11px 20px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-generate:hover { background: var(--ink); transform: translateY(-1px); }
+  .btn-dl {
+    background: transparent; color: var(--ink);
+    border: 1.5px solid var(--ink);
+    padding: 10px 18px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-dl:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+
+  .hero {
+    max-width: 1400px; margin: 0 auto;
+    padding: 72px 48px 56px; border-bottom: 1px solid var(--ink);
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+  h1.hero-title {
+    font-family: 'Fraunces', serif; font-weight: 400;
+    font-size: clamp(48px, 7vw, 96px); line-height: 0.95;
+    letter-spacing: -0.03em; margin-bottom: 32px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1.hero-title em { font-style: italic; font-weight: 300; color: var(--accent); }
+  .hero-sub {
+    font-family: 'Fraunces', serif; font-size: 19px; line-height: 1.5;
+    max-width: 720px; font-weight: 300;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    margin-top: 56px;
+    border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+  }
+  .stat { padding: 20px 24px; border-right: 1px solid var(--ink); }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Fraunces', serif; font-size: 42px; font-weight: 500;
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-top: 8px;
+  }
+
+  .test-groups { display: flex; flex-direction: column; gap: 32px; }
+  .test-group { border: 1px solid var(--ink); background: var(--paper); overflow: hidden; }
+  .test-group-header {
+    background: var(--ink); color: var(--paper);
+    padding: 14px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700;
+  }
+  .test-group-count {
+    background: var(--accent); color: var(--paper);
+    padding: 2px 10px; font-size: 10px; border-radius: 2px;
+  }
+  .test-row {
+    display: grid; grid-template-columns: 28px 1fr 2.2fr;
+    border-bottom: 1px solid var(--paper-2);
+    transition: background 0.15s; cursor: pointer;
+  }
+  .test-row:last-child { border-bottom: none; }
+  .test-row:hover { background: var(--paper-2); }
+  .test-check {
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 18px; border-right: 1px solid var(--paper-2);
+  }
+  .checkbox {
+    width: 14px; height: 14px; border: 1.5px solid var(--ink);
+    cursor: pointer; background: var(--paper);
+    transition: all 0.15s; margin-top: 2px; position: relative;
+  }
+  .checkbox.checked { background: var(--accent); border-color: var(--accent); }
+  .checkbox.checked::after {
+    content: '✓'; color: var(--paper); font-size: 10px; font-weight: 700;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); line-height: 1;
+  }
+  .test-what {
+    padding: 14px 20px; border-right: 1px solid var(--paper-2);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .test-what-name {
+    font-family: 'Fraunces', serif; font-size: 17px;
+    font-weight: 500; line-height: 1.25;
+  }
+  .test-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .test-tag.priority-high { color: var(--accent); }
+  .test-tag.priority-mid { color: var(--accent-2); }
+  .test-verify { padding: 14px 20px; font-size: 14px; line-height: 1.5; }
+  .new-pill {
+    display: inline-block; background: var(--highlight); color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; letter-spacing: 0.15em; padding: 2px 6px;
+    margin-left: 8px; text-transform: uppercase; font-weight: 700;
+    transform: translateY(-2px);
+  }
+
+  .progress-fixed {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--ink); color: var(--paper);
+    padding: 14px 20px; border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .progress-fixed.visible { opacity: 1; pointer-events: auto; }
+  .progress-bar-wrap { width: 120px; height: 6px; background: rgba(244,241,234,0.2); overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(14,14,12,0.7);
+    backdrop-filter: blur(6px); z-index: 200;
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-overlay.active { display: flex; animation: fadeIn 0.25s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--paper); border: 2px solid var(--ink);
+    max-width: 580px; width: 100%; max-height: 90vh;
+    overflow-y: auto; position: relative;
+  }
+  .modal-header {
+    background: var(--ink); color: var(--paper);
+    padding: 20px 28px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-title-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .modal-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .modal-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 400; line-height: 1.1; }
+  .modal-title em { font-style: italic; color: var(--highlight); }
+  .modal-close {
+    background: transparent; border: 1px solid var(--paper);
+    color: var(--paper); width: 32px; height: 32px;
+    cursor: pointer; font-size: 16px;
+    font-family: 'JetBrains Mono', monospace; transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--paper); color: var(--ink); }
+  .modal-body { padding: 32px 28px; }
+  .field-group { margin-bottom: 24px; }
+  .field-label {
+    display: block; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+  }
+  .field-input {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--ink); background: var(--paper);
+    font-family: 'Fraunces', serif; font-size: 18px;
+    color: var(--ink); outline: none; transition: all 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); background: #fff; }
+  .field-input::placeholder { color: var(--muted); font-style: italic; }
+  .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .category-option {
+    padding: 16px; border: 1.5px solid var(--ink); background: var(--paper);
+    cursor: pointer; transition: all 0.15s; text-align: left;
+  }
+  .category-option:hover { background: var(--paper-2); }
+  .category-option.selected { background: var(--ink); color: var(--paper); }
+  .category-option.selected .cat-num { color: var(--highlight); }
+  .cat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.15em; color: var(--accent);
+    margin-bottom: 4px; display: block;
+  }
+  .cat-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; line-height: 1.2; }
+  .cat-name em { font-style: italic; font-weight: 300; }
+  .modal-footer {
+    padding: 20px 28px; border-top: 1px solid var(--paper-2);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; background: var(--paper-2);
+  }
+  .modal-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .btn-primary {
+    background: var(--accent); color: var(--paper); border: none;
+    padding: 12px 24px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--ink); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .toast {
+    position: fixed; bottom: 80px; right: 24px;
+    background: var(--accent-2); color: var(--paper);
+    padding: 14px 20px; font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    z-index: 400; transform: translateY(120px); opacity: 0;
+    transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  footer {
+    background: var(--ink); color: var(--paper);
+    padding: 64px 48px;
+  }
+  .footer-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .footer-quote {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 28px; font-weight: 300; line-height: 1.3;
+  }
+  .footer-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(244,241,234,0.6); text-align: right;
+  }
+  .footer-meta div { margin-bottom: 6px; }
+
+  /* CATEGORY CARDS */
+  .categories {
+    max-width: 1400px; margin: 0 auto;
+    padding: 64px 48px 80px;
+  }
+  .categories-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 40px;
+  }
+  .cat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+    gap: 1px; background: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .cat-card {
+    background: var(--paper); padding: 28px 24px;
+    cursor: pointer; transition: background 0.18s;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .cat-card:hover { background: var(--paper-2); }
+  .cat-card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .cat-card-title {
+    font-family: 'Fraunces', serif; font-size: 24px; font-weight: 400;
+    line-height: 1.1; letter-spacing: -0.01em;
+  }
+  .cat-card-title em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .cat-card-desc {
+    font-family: 'Fraunces', serif; font-size: 13px; font-weight: 300;
+    color: var(--muted); line-height: 1.4;
+  }
+  .cat-card-groups {
+    list-style: none; display: flex; flex-direction: column; gap: 0; flex: 1;
+  }
+  .cat-card-groups li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); padding: 5px 0;
+    border-bottom: 1px dashed var(--paper-2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cat-card-groups li::before { content: '→'; color: var(--accent); }
+  .cat-card-meta {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--paper-2);
+  }
+  .cat-card-count-num {
+    font-family: 'Fraunces', serif; font-size: 34px; font-weight: 500;
+    line-height: 1; letter-spacing: -0.02em;
+  }
+  .cat-card-count-lbl {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);
+    margin-top: 3px;
+  }
+  .cat-card-cta {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); background: none; border: none;
+    cursor: pointer; transition: color 0.15s;
+  }
+  .cat-card:hover .cat-card-cta { color: var(--ink); }
+
+  /* CHECKLIST OVERLAY */
+  .checklist-overlay {
+    position: fixed; inset: 0;
+    background: var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(14,14,12,0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+    z-index: 150;
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .checklist-overlay.active { display: flex; animation: olSlideIn 0.28s ease; }
+  @keyframes olSlideIn {
+    from { transform: translateX(4%); opacity: 0; }
+    to   { transform: translateX(0);  opacity: 1; }
+  }
+  .ol-header {
+    background: var(--ink); color: var(--paper);
+    padding: 14px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; border-bottom: 2px solid var(--ink);
+  }
+  .ol-header-left { display: flex; align-items: center; gap: 20px; }
+  .ol-cat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: var(--accent);
+    border-right: 1px solid rgba(244,241,234,0.15); padding-right: 20px;
+  }
+  .ol-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(244,241,234,0.45); margin-bottom: 3px;
+  }
+  .ol-title {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; line-height: 1.1;
+  }
+  .ol-header-right { display: flex; align-items: center; gap: 10px; }
+  .btn-back {
+    background: transparent; border: 1px solid rgba(244,241,234,0.25);
+    color: rgba(244,241,234,0.7); padding: 7px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--paper); color: var(--paper); }
+  .ol-body { flex: 1; overflow-y: auto; padding: 40px 48px; }
+  .ol-body-inner { max-width: 1400px; margin: 0 auto; }
+  .ol-section-head {
+    margin-bottom: 40px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .ol-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .ol-section-title {
+    font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400; line-height: 1.0; letter-spacing: -0.02em;
+    margin-bottom: 12px; font-variation-settings: "opsz" 144;
+  }
+  .ol-section-title em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .ol-section-desc {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: 16px; max-width: 720px; line-height: 1.5; color: var(--muted);
+  }
+  .ol-footer {
+    background: var(--paper-2); border-top: 2px solid var(--ink);
+    padding: 12px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; gap: 24px;
+  }
+  .ol-footer-progress {
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; color: var(--ink);
+  }
+
+  @media (max-width: 768px) {
+    .masthead, .hero, .categories { padding-left: 20px; padding-right: 20px; }
+    .masthead-inner { gap: 12px; }
+    .meta { display: none; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--ink); }
+    .cat-cards-grid { grid-template-columns: 1fr; }
+    .test-row { grid-template-columns: 28px 1fr; }
+    .test-verify {
+      grid-column: 1 / -1; border-top: 1px dashed var(--paper-2);
+      padding-left: 28px;
+    }
+    .test-what { border-right: none; }
+    .footer-inner { grid-template-columns: 1fr; gap: 24px; }
+    .footer-meta { text-align: left; }
+    .progress-fixed { bottom: 12px; right: 12px; padding: 10px 14px; }
+    .progress-bar-wrap { width: 80px; }
+    .category-grid { grid-template-columns: 1fr; }
+    .ol-header { padding: 12px 20px; }
+    .ol-body { padding: 24px 20px; }
+    .ol-footer { padding: 10px 20px; gap: 12px; }
+    .ol-footer-progress .progress-bar-wrap { width: 80px; }
+    .ol-title { font-size: 16px; }
+  }
+  @media print {
+    .progress-fixed, .masthead, .modal-overlay, .checklist-overlay { display: none; }
+    body { background: white; }
+    .test-group { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><span class="brand-dot"></span>QA / Master Checklist · v2.1</div>
+    <div class="masthead-actions">
+      <div class="meta">
+        <span>Coverage Matrix</span>
+        <span>2026</span>
+      </div>
+      <button class="btn-dl" onclick="openDownloadModal()">⬇ Download Checklists</button>
+      <button class="btn-generate" onclick="openModal()">⬇ Generate Report</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-tag">Professional QA Coverage</div>
+  <h1 class="hero-title">The complete<br/>testing <em>playbook</em>.</h1>
+  <p class="hero-sub">A structured, end-to-end checklist covering every layer of modern software quality assurance — from static page audits to dynamic application security, from mobile compatibility to ecommerce transaction flows. Select a domain. Tick what's done. Generate a PPT. Ship with confidence.</p>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">05</div><div class="stat-label">Major Domains</div></div>
+    <div class="stat"><div class="stat-num">30<span style="color:var(--accent);font-size:24px;">+</span></div><div class="stat-label">Test Categories</div></div>
+    <div class="stat"><div class="stat-num">200<span style="color:var(--accent);font-size:24px;">+</span></div><div class="stat-label">Verification Points</div></div>
+    <div class="stat"><div class="stat-num">100<span style="font-size:24px;">%</span></div><div class="stat-label">Production Ready</div></div>
+  </div>
+</section>
+
+<section class="categories" id="domains">
+  <div class="categories-label">— Testing Domains · Select to Begin Audit</div>
+  <div class="cat-cards-grid" id="catCardsGrid">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<div class="progress-fixed" id="progressFixed">
+  <span id="progressText">0 / 0</span>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<!-- MODAL: Download Checklist PDF -->
+<div class="modal-overlay" id="downloadModal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-eyebrow">— Export</div>
+        <div class="modal-title">Download <em>PDF</em></div>
+      </div>
+      <button class="modal-close" onclick="closeDownloadModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">— Select Checklist to Export</label>
+        <div class="category-grid" style="grid-template-columns:1fr 1fr 1fr;">
+          <button class="category-option dl-cat-btn" data-dlcat="all">
+            <span class="cat-num">00 / All</span>
+            <span class="cat-name">All <em>Checklists</em></span>
+          </button>
+          <button class="category-option dl-cat-btn" data-dlcat="static">
+            <span class="cat-num">01 / Static</span>
+            <span class="cat-name">Static <em>Website</em></span>
+          </button>
+          <button class="category-option dl-cat-btn" data-dlcat="dynamic">
+            <span class="cat-num">02 / Dynamic</span>
+            <span class="cat-name">Dynamic <em>Website</em></span>
+          </button>
+          <button class="category-option dl-cat-btn" data-dlcat="ecommerce">
+            <span class="cat-num">02.1 / Sub</span>
+            <span class="cat-name"><em>Ecommerce</em></span>
+          </button>
+          <button class="category-option dl-cat-btn" data-dlcat="webapp">
+            <span class="cat-num">03 / Web App</span>
+            <span class="cat-name">Web <em>Application</em></span>
+          </button>
+          <button class="category-option dl-cat-btn" data-dlcat="mobile">
+            <span class="cat-num">04 / Mobile</span>
+            <span class="cat-name">Mobile <em>App</em></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-info" id="dlModalInfo">Select a checklist to export</span>
+      <button class="btn-primary" id="dlBtn" disabled onclick="triggerPDFDownload()">Download PDF →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Step 1 — Project Details & Category -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <div class="modal-eyebrow">— Generate Report</div>
+        <div class="modal-title">Start <em>QA audit</em></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">— Website / Project Name</label>
+        <input type="text" class="field-input" id="websiteName" placeholder="e.g. Acme Corporate Site" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">— Tester Name (optional)</label>
+        <input type="text" class="field-input" id="testerName" placeholder="e.g. Priya Sharma" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">— Select Testing Category</label>
+        <div class="category-grid">
+          <button class="category-option" data-cat="static">
+            <span class="cat-num">01 / Static</span>
+            <span class="cat-name">Static <em>Website</em></span>
+          </button>
+          <button class="category-option" data-cat="dynamic">
+            <span class="cat-num">02 / Dynamic</span>
+            <span class="cat-name">Dynamic <em>Website</em></span>
+          </button>
+          <button class="category-option" data-cat="ecommerce">
+            <span class="cat-num">02.1 / Subset</span>
+            <span class="cat-name">Ecommerce</span>
+          </button>
+          <button class="category-option" data-cat="webapp">
+            <span class="cat-num">03 / Web App</span>
+            <span class="cat-name">Web <em>Application</em></span>
+          </button>
+          <button class="category-option" data-cat="mobile">
+            <span class="cat-num">04 / Mobile</span>
+            <span class="cat-name">Mobile <em>App</em></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-info" id="modalInfo">Tick boxes on the page first</span>
+      <button class="btn-primary" id="generateBtn" disabled onclick="openChecklist()">View Checklist →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST OVERLAY: Step 2 — Tick items, then generate PPT -->
+<div class="checklist-overlay" id="checklistOverlay">
+  <div class="ol-header">
+    <div class="ol-header-left">
+      <div class="ol-cat-num" id="olCatNum">01 /05</div>
+      <div>
+        <div class="ol-eyebrow" id="olProjectName">Project</div>
+        <div class="ol-title" id="olTitle">Static Website Testing</div>
+      </div>
+    </div>
+    <div class="ol-header-right">
+      <button class="btn-back" onclick="backToForm()">← Back</button>
+      <button class="modal-close" onclick="closeChecklist()">✕</button>
+    </div>
+  </div>
+  <div class="ol-body">
+    <div class="ol-body-inner">
+      <div class="ol-section-head">
+        <div class="ol-section-label" id="olSectionLabel">— QA Checklist</div>
+        <div class="ol-section-title" id="olSectionTitle">Static <em>Website</em> Testing</div>
+        <p class="ol-section-desc" id="olSectionDesc">Category description.</p>
+      </div>
+      <div id="checklistContent"></div>
+    </div>
+  </div>
+  <div class="ol-footer">
+    <div class="ol-footer-progress">
+      <span id="olProgressText">0 / 0 verified</span>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="olProgressBar"></div></div>
+    </div>
+    <button class="btn-generate" onclick="generatePPT()">⬇ Generate PPT</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Report generated</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-quote">
+      "Quality isn't a department.<br/>It's the discipline of <em>caring twice</em> — once before ship, once after."
+    </div>
+    <div class="footer-meta">
+      <div>QA Master Coverage Matrix</div>
+      <div>v 2.1 · 2026 Edition</div>
+      <div>Print · Share · Export</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// SHARED CHECKLIST GROUPS
+// ─────────────────────────────────────────────
+const _GRP = {};
+
+_GRP.uiDesign = { name: 'UI / Design Testing', items: [
+  { name: 'Layout alignment',               tag: 'Visual · High', p: 'high', isNew: false, v: 'Verify sections, cards, buttons, images, and content are aligned properly without overlap or broken spacing across all viewports.' },
+  { name: 'Responsive design',              tag: 'Visual · High', p: 'high', isNew: false, v: 'Verify website adapts correctly across mobile, tablet, laptop, and desktop resolutions including 320px, 768px, 1024px, and 1440px breakpoints.' },
+  { name: 'Cross-browser compatibility',    tag: 'Compat · High', p: 'high', isNew: false, v: 'Verify UI behaves consistently across Chrome, Firefox, Safari, Edge, and on both Windows and macOS.' },
+  { name: 'Visual regression',              tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify pixel-level consistency across deploys using snapshot comparison; catch unintended CSS or layout shifts.' },
+  { name: 'Interactive states',             tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify hover, focus, active, disabled, and loading states for all interactive elements are styled and behave correctly.' },
+  { name: 'Image rendering',                tag: 'Visual · Low',  p: '',     isNew: true,  v: 'Verify images load without broken refs, lazy-loading triggers correctly, and responsive srcsets serve appropriate sizes.' },
+  { name: 'Font loading',                   tag: 'Visual · Low',  p: '',     isNew: true,  v: 'Verify web fonts load without flash of unstyled text (FOUT/FOIT); fallback fonts render acceptably during load.' },
+  { name: 'Browser zoom testing',           tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify layout remains usable and readable at 125%, 150%, and 200% browser zoom levels without horizontal scrolling or overlapping content.' },
+  { name: 'Dark mode compatibility',        tag: 'Visual · Low',  p: '',     isNew: true,  v: 'Verify the site respects the prefers-color-scheme media query; dark mode renders with legible contrast and correct brand colors if supported.' },
+  { name: 'Content overflow/truncation',    tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify long text strings, dynamic data, and translated content do not overflow containers or get truncated without visible ellipsis or wrapping.' },
+]};
+
+_GRP.functional = { name: 'Functional Testing', items: [
+  { name: 'Navigation links',               tag: 'Functional · High', p: 'high', isNew: false, v: 'Verify navbar, footer, and internal links redirect to correct pages without 404s or unintended redirects.' },
+  { name: 'Forms validation',               tag: 'Functional · High', p: 'high', isNew: false, v: 'Verify forms submit correctly with field validations, error messages, and success confirmations including edge cases.' },
+  { name: '404 / error pages',              tag: 'Functional · Med',  p: 'mid',  isNew: true,  v: 'Verify custom 404, 500, and offline pages render properly with a clear path back to functional content.' },
+  { name: 'Broken link audit',              tag: 'Functional · Med',  p: 'mid',  isNew: true,  v: 'Verify all internal and external links resolve to valid destinations; flag dead links across the entire site.' },
+  { name: 'Third-party embeds',             tag: 'Functional · Low',  p: '',     isNew: true,  v: 'Verify analytics scripts, chat widgets, embedded videos, maps, and social embeds load and function correctly.' },
+  { name: 'Network failure validation',     tag: 'Functional · Med',  p: 'mid',  isNew: true,  v: 'Verify the UI handles failed API calls, timeouts, and offline states gracefully with appropriate error messages and no blank screen states.' },
+]};
+
+_GRP.contentTesting = { name: 'Content Testing', items: [
+  { name: 'Grammar & spelling check',       tag: 'Content · Med', p: 'mid', isNew: true, v: 'Verify all visible copy is free of spelling errors, grammar mistakes, and punctuation inconsistencies across all pages and components.' },
+  { name: 'Content consistency',            tag: 'Content · Med', p: 'mid', isNew: true, v: 'Verify terminology, tone, brand voice, and formatting are consistent throughout the site; no stale or placeholder copy remains in production.' },
+  { name: 'Localization / multilingual',    tag: 'Content · Med', p: 'mid', isNew: true, v: 'Verify translated content renders correctly without layout breaks, truncation, or encoding issues; language switcher functions properly if present.' },
+  { name: 'Date/time formatting',           tag: 'Content · Low', p: '',    isNew: true, v: 'Verify dates and times display in locale-appropriate formats and that dynamic dates update correctly without timezone or formatting errors.' },
+]};
+
+_GRP.seo = { name: 'SEO Testing', items: [
+  { name: 'Meta title & description',       tag: 'SEO · High', p: 'high', isNew: false, v: 'Verify pages contain proper SEO metadata for search engines with appropriate length and unique values per page.' },
+  { name: 'Sitemap & robots.txt',           tag: 'SEO · High', p: 'high', isNew: false, v: 'Verify indexing and crawling configurations are correctly implemented; sitemap.xml is valid and submitted to search consoles.' },
+  { name: 'Open Graph & Twitter cards',     tag: 'SEO · Med',  p: 'mid',  isNew: true,  v: 'Verify social sharing previews render correctly on Facebook, LinkedIn, X/Twitter, and Slack with proper images and titles.' },
+  { name: 'Structured data / JSON-LD',      tag: 'SEO · Med',  p: 'mid',  isNew: true,  v: "Verify schema markup is present and validates without errors using Google's Rich Results Test or Schema.org validator." },
+  { name: 'Heading hierarchy & alt text',   tag: 'SEO · Low',  p: '',     isNew: true,  v: 'Verify H1–H6 hierarchy is logical, every page has a single H1, and images contain descriptive alt attributes.' },
+  { name: 'Canonical URL validation',       tag: 'SEO · High', p: 'high', isNew: true,  v: 'Verify canonical tags are present and point to the correct preferred URL on all pages to prevent duplicate content indexing issues.' },
+  { name: 'Redirect verification',          tag: 'SEO · Med',  p: 'mid',  isNew: true,  v: 'Verify all 301 and 302 redirects resolve correctly; redirect chains are minimal and no redirect loops exist across the site.' },
+  { name: 'Favicon presence',               tag: 'SEO · Low',  p: '',     isNew: true,  v: 'Verify favicons are correctly configured for browser tabs, bookmarks, and PWA contexts in all required sizes and formats.' },
+  { name: 'Indexing / noindex directives',  tag: 'SEO · Med',  p: 'mid',  isNew: true,  v: 'Verify noindex tags are applied only to pages excluded from search; staging, thank-you, and admin pages are not accidentally indexed.' },
+]};
+
+_GRP.performance = { name: 'Performance Testing', items: [
+  { name: 'Page speed',                     tag: 'Perf · High', p: 'high', isNew: false, v: 'Verify pages load within acceptable performance limits — typically under 3 seconds on 3G and under 1.5 seconds on broadband.' },
+  { name: 'Core Web Vitals',                tag: 'Perf · High', p: 'high', isNew: true,  v: 'Verify LCP under 2.5s, INP under 200ms, and CLS under 0.1 across key landing pages on real-user data.' },
+  { name: 'Asset optimization',             tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify images are compressed, CSS/JS minified, fonts subset, and CDN caching headers configured correctly.' },
+  { name: 'Lazy loading verification',      tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify off-screen images, iframes, and components lazy-load correctly; they appear on scroll without layout shift or blank placeholder artifacts.' },
+  { name: 'Browser caching validation',     tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify static assets have appropriate Cache-Control headers and expiry dates; repeated page loads benefit from cache hits without stale content.' },
+  { name: 'CDN delivery verification',      tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify static assets are served through CDN edge nodes; response headers confirm CDN origin and cache status is HIT on repeated requests.' },
+  { name: 'Mobile network throttling',      tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify site remains usable and loads within acceptable limits under throttled mobile network conditions (3G / 4G simulation).' },
+]};
+
+_GRP.security = { name: 'Security Testing', items: [
+  { name: 'HTTPS / SSL',                    tag: 'Security · High', p: 'high', isNew: false, v: 'Verify SSL certificates are valid, not expired, and HTTPS is enforced site-wide with HTTP-to-HTTPS redirects.' },
+  { name: 'Security headers',               tag: 'Security · Med',  p: 'mid',  isNew: true,  v: 'Verify CSP, HSTS, X-Frame-Options, X-Content-Type-Options, and Referrer-Policy headers are present and correctly configured.' },
+  { name: 'Mixed content check',            tag: 'Security · High', p: 'high', isNew: true,  v: 'Verify all resources (scripts, stylesheets, images, fonts) are loaded over HTTPS; no mixed content warnings appear in the browser console.' },
+  { name: 'Cookie security attributes',     tag: 'Security · High', p: 'high', isNew: true,  v: 'Verify cookies are set with Secure, HttpOnly, and SameSite attributes appropriate to their use; session cookies are not exposed to JavaScript.' },
+  { name: 'Clickjacking protection',        tag: 'Security · Med',  p: 'mid',  isNew: true,  v: 'Verify X-Frame-Options or CSP frame-ancestors directive is configured to prevent the site from being embedded in malicious frames.' },
+  { name: 'Source map exposure',            tag: 'Security · Med',  p: 'mid',  isNew: true,  v: 'Verify source maps are not publicly accessible in production builds; .map files return 404 or are restricted to internal access only.' },
+]};
+
+_GRP.accessibility = { name: 'Accessibility Testing', items: [
+  { name: 'Keyboard navigation',            tag: 'A11y · High', p: 'high', isNew: false, v: 'Verify website is fully accessible without mouse interaction; tab order is logical and focus indicators visible.' },
+  { name: 'Screen reader compatibility',    tag: 'A11y · Med',  p: 'mid',  isNew: true,  v: 'Verify content is announced correctly by NVDA, JAWS, and VoiceOver with appropriate ARIA labels and landmarks.' },
+  { name: 'Color contrast',                 tag: 'A11y · Med',  p: 'mid',  isNew: true,  v: 'Verify text and interactive elements meet WCAG 2.1 AA contrast ratios — 4.5:1 for body text, 3:1 for large text and UI components.' },
+  { name: 'Focus visibility',               tag: 'A11y · High', p: 'high', isNew: true,  v: 'Verify focus indicators are clearly visible and have sufficient contrast on all interactive elements; browser default outline is not suppressed without a replacement.' },
+  { name: 'Skip-to-content link',           tag: 'A11y · Med',  p: 'mid',  isNew: true,  v: 'Verify a visible skip navigation link appears on focus at the top of the page and correctly jumps to the main content area.' },
+  { name: 'ARIA labels & roles',            tag: 'A11y · Med',  p: 'mid',  isNew: true,  v: 'Verify interactive components without visible labels have descriptive aria-label or aria-labelledby attributes; landmark roles are correctly applied.' },
+  { name: 'Form accessibility',             tag: 'A11y · Med',  p: 'mid',  isNew: true,  v: 'Verify all form fields have associated label elements, error messages are linked via aria-describedby, and required fields are indicated programmatically.' },
+]};
+
+_GRP.prodDeployQA = { name: 'Production / Deployment QA', items: [
+  { name: 'Environment config check',       tag: 'Deploy · High', p: 'high', isNew: true, v: 'Verify production environment variables, API endpoints, and feature flags are correctly set; no development or staging configs remain active in production.' },
+  { name: 'Deployment smoke testing',       tag: 'Deploy · High', p: 'high', isNew: true, v: 'Verify critical user journeys (homepage load, key CTAs, form submission, navigation) work correctly immediately after each production deployment.' },
+  { name: 'Production asset loading',       tag: 'Deploy · Med',  p: 'mid',  isNew: true, v: 'Verify all CSS, JS, images, and fonts load successfully in production from the correct CDN or hosting URLs; no assets return 404 or serve stale cached versions.' },
+]};
+
+_GRP.advancedQA = { name: 'Advanced QA By Engineer', items: [
+  { name: 'URL slug error check automation', tag: 'Automation · Med', p: 'mid', isNew: true, v: 'Verify all provided URLs and slugs return valid responses without broken routes, redirect loops, malformed paths, or unexpected HTTP status codes using Playwright with TypeScript automation.' },
+]};
+
+// ── Dynamic-specific ──────────────────────────
+_GRP.database = { name: 'Database Testing', items: [
+  { name: 'CRUD operations',                tag: 'DB · High', p: 'high', isNew: false, v: 'Verify Create, Read, Update, and Delete operations work correctly across all entities with proper data persistence.' },
+  { name: 'Duplicate prevention',           tag: 'DB · High', p: 'high', isNew: false, v: 'Verify duplicate records are prevented wherever required through unique constraints and validation logic.' },
+  { name: 'Database integrity validation',  tag: 'DB · High', p: 'high', isNew: true,  v: 'Verify referential integrity constraints, foreign key relationships, and cascading operations behave correctly without orphaned or inconsistent records.' },
+  { name: 'Data persistence across sessions', tag: 'DB · Med', p: 'mid', isNew: true,  v: 'Verify user-created data persists correctly across browser sessions, server restarts, and cache invalidation events.' },
+]};
+
+_GRP.api = { name: 'API Testing', items: [
+  { name: 'API response validation',        tag: 'API · High', p: 'high', isNew: false, v: 'Verify API returns correct structure, data types, response codes, and error payloads matching the contract.' },
+  { name: 'Authentication & authorization', tag: 'API · High', p: 'high', isNew: false, v: 'Verify secured APIs require proper tokens and permissions; unauthorized requests are rejected with appropriate status codes.' },
+  { name: 'Error handling & status codes',  tag: 'API · High', p: 'high', isNew: true,  v: 'Verify API returns appropriate HTTP status codes (400, 401, 403, 404, 422, 500) for invalid requests with meaningful, non-verbose error messages.' },
+  { name: 'Request timeout handling',       tag: 'API · Med',  p: 'mid',  isNew: true,  v: 'Verify API endpoints respond within acceptable time limits and the client handles timeouts gracefully without hanging or crashing.' },
+  { name: 'Payload validation',             tag: 'API · Med',  p: 'mid',  isNew: true,  v: 'Verify APIs reject oversized payloads, malformed JSON, incorrect content types, and boundary values with proper validation error responses.' },
+]};
+
+_GRP.sessionAuth = { name: 'Session & Authentication Testing', items: [
+  { name: 'Session timeout',                tag: 'Session · Med',  p: 'mid',  isNew: false, v: 'Verify inactive users are automatically logged out securely after configured timeout; session tokens invalidated server-side.' },
+  { name: 'Login / logout flow',            tag: 'Session · High', p: 'high', isNew: true,  v: 'Verify login creates a valid session and logout fully invalidates all server-side session data; re-authentication is required after logout.' },
+  { name: 'Password reset flow',            tag: 'Session · High', p: 'high', isNew: true,  v: 'Verify password reset tokens are single-use, time-limited, and securely delivered; expired or already-used tokens are rejected with appropriate errors.' },
+  { name: 'Role-based access control',      tag: 'Session · High', p: 'high', isNew: true,  v: 'Verify users can only access resources and actions permitted by their assigned role; role changes take effect immediately without requiring re-login.' },
+  { name: 'Session token security',         tag: 'Session · High', p: 'high', isNew: true,  v: 'Verify session tokens are sufficiently random, transmitted only over HTTPS, and rotated after privilege changes or authentication events.' },
+]};
+
+_GRP.dynamicFunctional = { name: 'Dynamic Functional Testing', items: [
+  { name: 'Real-time data updates',         tag: 'Dynamic · High', p: 'high', isNew: true, v: 'Verify dynamically loaded content (dashboards, feeds, counters) updates without page reload via WebSockets, SSE, or polling mechanisms.' },
+  { name: 'Search & filter functionality',  tag: 'Dynamic · High', p: 'high', isNew: true, v: 'Verify search returns relevant results accurately; filters narrow results correctly and can be combined, reset, and persisted.' },
+  { name: 'Pagination & infinite scroll',   tag: 'Dynamic · Med',  p: 'mid',  isNew: true, v: 'Verify paginated lists and infinite scroll load the correct items, maintain scroll position, and handle edge cases (last page, empty results).' },
+  { name: 'Dynamic form validation',        tag: 'Dynamic · Med',  p: 'mid',  isNew: true, v: 'Verify client-side validation triggers correctly as users type; error messages appear inline and clear when the issue is resolved.' },
+  { name: 'State management across nav',    tag: 'Dynamic · Med',  p: 'mid',  isNew: true, v: 'Verify application state (filters, form data, scroll position) is preserved when navigating back, or reset when appropriate.' },
+  { name: 'Error boundary handling',        tag: 'Dynamic · Med',  p: 'mid',  isNew: true, v: 'Verify component-level errors are caught and display user-friendly fallback UI without crashing the entire application.' },
+]};
+
+_GRP.advancedSecurityQA = { name: 'Advanced Security QA Engineering', items: [
+  { name: 'Burp Suite intercept & payload injection', tag: 'Security · High', p: 'high', isNew: true, v: 'Intercept HTTP requests via Burp Suite and inject SQL/XSS/command injection payloads to verify server-side input sanitization rejects all malicious input.' },
+  { name: 'SQL injection payload validation',         tag: 'Security · High', p: 'high', isNew: true, v: 'Submit UNION-based, error-based, and blind SQLi payloads to all input fields and API parameters; verify no data leakage or DB errors are exposed.' },
+  { name: 'XSS payload testing',                     tag: 'Security · High', p: 'high', isNew: true, v: 'Inject stored, reflected, and DOM-based XSS payloads; verify CSP blocks script execution and no payload runs in browser context.' },
+  { name: 'Header manipulation testing',             tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Modify Host, X-Forwarded-For, and Origin headers via proxy; verify server rejects or correctly handles unexpected header values.' },
+  { name: 'JWT tampering validation',                tag: 'Security · High', p: 'high', isNew: true, v: 'Decode, modify claims, and re-sign JWTs with weak/none algorithm; verify server rejects tampered tokens with 401.' },
+  { name: 'OWASP ZAP automated scan',                tag: 'Security · High', p: 'high', isNew: true, v: 'Run full OWASP ZAP active scan against the target; verify zero high-severity findings are present before deployment.' },
+  { name: 'Forced browsing & route discovery',       tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Enumerate predictable paths and admin endpoints; verify unauthenticated access is blocked with 401/403 responses.' },
+  { name: 'Rate limit validation',                   tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Send burst requests exceeding rate limits; verify 429 responses are returned and brute-force attempts are mitigated.' },
+  { name: 'Session hijack testing',                  tag: 'Security · High', p: 'high', isNew: true, v: 'Capture session tokens and replay in new browser context; verify tokens are invalidated after logout and expire correctly.' },
+  { name: 'IDOR testing',                            tag: 'Security · High', p: 'high', isNew: true, v: 'Enumerate sequential IDs and GUIDs in API parameters and path variables; verify horizontal and vertical privilege escalation is blocked at the server layer.' },
+  { name: 'SSRF testing',                            tag: 'Security · High', p: 'high', isNew: true, v: 'Inject internal hostnames, IP ranges, and cloud metadata URLs via redirect parameters and webhook fields; verify server-side request filtering prevents SSRF exploitation.' },
+  { name: 'CSRF protection validation',              tag: 'Security · High', p: 'high', isNew: true, v: 'Verify all state-changing requests require and validate anti-CSRF tokens; forged cross-origin requests are rejected with 403 responses.' },
+]};
+
+// ── Ecommerce-specific ────────────────────────
+_GRP.productTesting = { name: 'Product Testing', items: [
+  { name: 'Product listing',                tag: 'Catalog · High', p: 'high', isNew: false, v: 'Verify products display correct pricing, images, stock status, variants, and details across catalog and detail pages.' },
+  { name: 'Filters & sorting',              tag: 'Catalog · High', p: 'high', isNew: false, v: 'Verify sorting and filtering produce accurate product results without breaking pagination or losing applied filters.' },
+  { name: 'Product detail page',            tag: 'Catalog · High', p: 'high', isNew: true,  v: 'Verify product detail pages display correct title, description, price, images, stock status, and SKU information without broken layouts.' },
+  { name: 'Product image gallery',          tag: 'Catalog · Med',  p: 'mid',  isNew: true,  v: 'Verify image carousels, zoom functionality, and alternate view thumbnails work correctly across devices and browsers.' },
+  { name: 'Stock / inventory status',       tag: 'Catalog · High', p: 'high', isNew: true,  v: 'Verify out-of-stock products display correct status, disable add-to-cart, and update correctly when inventory changes.' },
+  { name: 'Product variants',               tag: 'Catalog · High', p: 'high', isNew: true,  v: 'Verify selecting product options (size, color, material) correctly updates price, availability, images, and SKU without errors.' },
+]};
+
+_GRP.cartCheckout = { name: 'Cart & Checkout Testing', items: [
+  { name: 'Add to cart',                    tag: 'Cart · High',     p: 'high', isNew: false, v: 'Verify products are added correctly with proper quantity and pricing; cart persists across sessions where expected.' },
+  { name: 'Tax & shipping calculation',     tag: 'Checkout · High', p: 'high', isNew: false, v: 'Verify shipping charges and tax calculations are accurate based on destination, item weight, and applicable rules.' },
+  { name: 'Cart quantity update',           tag: 'Cart · High',     p: 'high', isNew: true,  v: 'Verify increasing and decreasing item quantities in cart correctly recalculates totals and reflects stock limits.' },
+  { name: 'Remove from cart',               tag: 'Cart · Med',      p: 'mid',  isNew: true,  v: 'Verify items are completely removed from cart and totals recalculate correctly; undo functionality works if present.' },
+  { name: 'Coupon / promo code',            tag: 'Checkout · Med',  p: 'mid',  isNew: true,  v: 'Verify valid coupon codes apply correct discounts; invalid or expired codes are rejected with clear error messages.' },
+  { name: 'Guest checkout',                 tag: 'Checkout · High', p: 'high', isNew: true,  v: 'Verify unauthenticated users can complete purchases without mandatory account creation; order confirmation is delivered by email.' },
+  { name: 'Cart abandonment recovery',      tag: 'Cart · Med',      p: 'mid',  isNew: true,  v: 'Verify cart contents persist across sessions for logged-in users; abandoned cart recovery emails trigger correctly where configured.' },
+  { name: 'Cross-sell / upsell display',    tag: 'Checkout · Low',  p: '',     isNew: true,  v: 'Verify related product recommendations render correctly in cart and checkout pages without blocking or disrupting the purchase flow.' },
+]};
+
+_GRP.paymentOrder = { name: 'Payment & Order Testing', items: [
+  { name: 'Successful / failed payments',   tag: 'Payment · High', p: 'high', isNew: false, v: 'Verify transactions update correctly for success, failure, and pending states; refunds and partial captures handled correctly.' },
+  { name: 'Order tracking',                 tag: 'Order · Med',    p: 'mid',  isNew: false, v: 'Verify users can track orders and receive proper status updates via email, SMS, and in-app notifications.' },
+  { name: 'Payment gateway integration',    tag: 'Payment · High', p: 'high', isNew: true,  v: 'Verify the integrated payment gateway processes transactions correctly in both test and production modes with appropriate error handling.' },
+  { name: 'Multiple payment methods',       tag: 'Payment · High', p: 'high', isNew: true,  v: 'Verify credit/debit cards, PayPal, Apple Pay, Google Pay, and any other configured methods complete transactions successfully.' },
+  { name: 'Order confirmation email',       tag: 'Order · High',   p: 'high', isNew: true,  v: 'Verify order confirmation emails are dispatched immediately after purchase with accurate order details, totals, and tracking information.' },
+  { name: 'Order history',                  tag: 'Order · Med',    p: 'mid',  isNew: true,  v: "Verify completed orders appear in the user's order history with correct status, items, and totals; order details page is accessible." },
+  { name: 'Invoice / receipt generation',   tag: 'Order · Med',    p: 'mid',  isNew: true,  v: 'Verify downloadable invoices are generated with correct billing information, line items, tax, and total; PDF renders correctly.' },
+  { name: 'Refund / return processing',     tag: 'Order · High',   p: 'high', isNew: true,  v: "Verify refund requests update order status, trigger the refund via payment gateway, and reflect correctly in the customer's account or card statement." },
+]};
+
+_GRP.ecommerceSecurity = { name: 'Ecommerce Security Testing', items: [
+  { name: 'Payment form injection testing', tag: 'Security · High', p: 'high', isNew: true, v: 'Inject payloads into card number, CVV, and address fields; verify no server-side processing errors or stack traces are exposed.' },
+  { name: 'OWASP ZAP spider crawl',         tag: 'Security · High', p: 'high', isNew: true, v: 'Run ZAP spider on checkout and account flows; verify all discovered endpoints require authentication where expected.' },
+  { name: 'API fuzzing checks',             tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Fuzz product IDs, cart endpoints, and order APIs with invalid types and boundary values; verify graceful error handling.' },
+  { name: 'Directory traversal validation', tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Attempt path traversal via file download or image URLs; verify server rejects traversal sequences and path normalization is enforced.' },
+  { name: 'Session hijack on checkout',     tag: 'Security · High', p: 'high', isNew: true, v: 'Verify checkout session tokens are regenerated post-login and invalidated post-purchase; tokens cannot be replayed.' },
+  { name: 'CSRF protection on orders',      tag: 'Security · High', p: 'high', isNew: true, v: 'Verify all state-changing requests (cart updates, order placement) include and validate anti-CSRF tokens; forged cross-origin requests are rejected.' },
+]};
+
+_GRP.ecommercePerformance = { name: 'Ecommerce Performance Testing', items: [
+  { name: 'Product catalog page load',      tag: 'Perf · High', p: 'high', isNew: true, v: 'Verify product listing pages with large catalogs load within acceptable limits; pagination or virtual scrolling prevents excessive DOM size.' },
+  { name: 'Search response time',           tag: 'Perf · High', p: 'high', isNew: true, v: 'Verify product search returns results within 500ms for typical queries; no degradation under concurrent search load.' },
+  { name: 'Checkout funnel performance',    tag: 'Perf · High', p: 'high', isNew: true, v: 'Verify each step of the checkout funnel (cart → address → payment → confirmation) loads within 2 seconds under normal traffic.' },
+  { name: 'High traffic simulation',        tag: 'Perf · Med',  p: 'mid',  isNew: true, v: 'Verify the store maintains acceptable performance under simulated peak traffic (flash sales, promotions) without errors or timeouts.' },
+]};
+
+_GRP.ecommerceSEO = { name: 'Ecommerce SEO Testing', items: [
+  { name: 'Product page meta tags',         tag: 'SEO · High', p: 'high', isNew: true, v: 'Verify each product page has unique meta title, description, and canonical URL; no duplicate meta tags across variant pages.' },
+  { name: 'Product schema markup',          tag: 'SEO · Med',  p: 'mid',  isNew: true, v: "Verify product structured data includes name, price, availability, and ratings; validates without errors in Google's Rich Results Test." },
+  { name: 'Breadcrumb navigation',          tag: 'SEO · Med',  p: 'mid',  isNew: true, v: 'Verify breadcrumb trails reflect correct category hierarchy, are structured with BreadcrumbList schema, and render correctly in search snippets.' },
+  { name: 'Canonical URLs for variants',    tag: 'SEO · Med',  p: 'mid',  isNew: true, v: 'Verify product variant pages have canonical tags pointing to the main product URL or contain unique, independently indexable content.' },
+]};
+
+_GRP.ecommerceAutomation = { name: 'Ecommerce Automation Testing', items: [
+  { name: 'Automated checkout flow',        tag: 'Automation · High', p: 'high', isNew: true, v: 'Automate end-to-end checkout scenarios using Playwright or Cypress, covering add-to-cart through order confirmation for guest and authenticated users.' },
+  { name: 'Payment gateway regression',     tag: 'Automation · High', p: 'high', isNew: true, v: 'Run automated payment flow tests against sandbox environments after each deployment to verify payment processing integration integrity.' },
+  { name: 'Cart persistence automation',    tag: 'Automation · Med',  p: 'mid',  isNew: true, v: 'Automate verification that cart contents persist for logged-in users across browser sessions, device changes, and cache clears.' },
+  { name: 'Order lifecycle automation',     tag: 'Automation · Med',  p: 'mid',  isNew: true, v: 'Automate order status progression tests from placement through fulfillment, verifying email notifications, inventory updates, and status changes at each stage.' },
+]};
+
+// ── WebApp-specific ───────────────────────────
+_GRP.authenticationTesting = { name: 'Authentication Testing', items: [
+  { name: 'Signup / Login',                 tag: 'Auth · High', p: 'high', isNew: false, v: 'Verify authentication workflows function securely and correctly including password reset, email verification, and account recovery.' },
+  { name: 'OTP / MFA',                      tag: 'Auth · High', p: 'high', isNew: false, v: 'Verify multi-factor authentication is secure and reliable — TOTP, SMS, email, and backup codes all function.' },
+  { name: 'Social login / OAuth',           tag: 'Auth · High', p: 'high', isNew: true,  v: 'Verify OAuth 2.0 flows with Google, GitHub, and other configured providers complete successfully and create or link accounts correctly.' },
+  { name: 'Account recovery flow',          tag: 'Auth · High', p: 'high', isNew: true,  v: 'Verify email-based account recovery sends tokens correctly, enforces single-use and expiry, and resets credentials without exposing user data.' },
+  { name: 'Session persistence',            tag: 'Auth · Med',  p: 'mid',  isNew: true,  v: 'Verify "Remember me" functionality persists sessions across browser restarts for the correct duration; sessions expire after the configured idle timeout.' },
+]};
+
+_GRP.authorizationTesting = { name: 'Authorization Testing', items: [
+  { name: 'Role-based access',              tag: 'Authz · High', p: 'high', isNew: false, v: 'Verify unauthorized users cannot access restricted resources via direct URL, API endpoints, or privilege escalation attempts.' },
+  { name: 'Resource-level permissions',     tag: 'Authz · High', p: 'high', isNew: true,  v: 'Verify users can only access, modify, or delete resources they own or have been explicitly granted permission to; object-level authorization is enforced.' },
+  { name: 'API endpoint access control',    tag: 'Authz · High', p: 'high', isNew: true,  v: 'Verify all API endpoints enforce authorization server-side regardless of UI state; direct API calls without proper permissions return 401 or 403.' },
+]};
+
+_GRP.businessWorkflow = { name: 'Business Workflow Testing', items: [
+  { name: 'End-to-end workflow validation', tag: 'E2E · High', p: 'high', isNew: true, v: 'Verify complete multi-step business processes (onboarding, approval flows, data pipelines) execute correctly from start to finish without manual intervention.' },
+  { name: 'Multi-step process integrity',   tag: 'E2E · High', p: 'high', isNew: true, v: 'Verify partially completed multi-step processes save state correctly; users can resume from the last completed step without data loss.' },
+  { name: 'Role-based workflow routing',    tag: 'E2E · Med',  p: 'mid',  isNew: true, v: 'Verify tasks are routed to the correct user roles at each workflow stage; unauthorized users cannot advance or modify workflow state.' },
+  { name: 'Workflow state persistence',     tag: 'E2E · Med',  p: 'mid',  isNew: true, v: 'Verify workflow state is correctly maintained across sessions, server restarts, and network interruptions; no state corruption occurs.' },
+]};
+
+_GRP.loadStress = { name: 'Performance Testing — Load & Stress', items: [
+  { name: 'Load testing (concurrent users)', tag: 'Perf · High', p: 'high', isNew: true, v: 'Simulate expected peak concurrent user loads using k6 or JMeter; verify response times remain within SLA thresholds under normal peak load.' },
+  { name: 'Stress testing (breaking point)', tag: 'Perf · High', p: 'high', isNew: true, v: 'Gradually increase load beyond expected peak to identify system breaking points; verify the application fails gracefully and recovers correctly.' },
+  { name: 'Concurrent user handling',        tag: 'Perf · High', p: 'high', isNew: true, v: 'Verify the application handles simultaneous writes, reads, and state changes from multiple users without race conditions, data corruption, or deadlocks.' },
+]};
+
+// ── Mobile-specific ───────────────────────────
+_GRP.mobileUIDesign = { name: 'UI / Design Testing', items: [
+  { name: 'Screen responsiveness',          tag: 'Visual · High', p: 'high', isNew: false, v: 'Verify UI adapts properly across multiple screen sizes, densities, and resolutions including notches, foldables, and tablets.' },
+  { name: 'Orientation testing',            tag: 'Visual · Med',  p: 'mid',  isNew: false, v: 'Verify portrait and landscape modes function correctly without state loss or layout breakage.' },
+  { name: 'Visual regression',              tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify pixel-level consistency across app builds and OS versions using snapshot comparison; catch unintended layout shifts.' },
+  { name: 'Interactive states',             tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify tap, press, disabled, and loading states for all interactive elements are styled and behave correctly on mobile.' },
+  { name: 'Font scaling',                   tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify text scales proportionally with system font size settings without overflow, truncation, or layout breakage at all accessibility sizes.' },
+  { name: 'Dark mode support',              tag: 'Visual · Low',  p: '',     isNew: true,  v: 'Verify app adapts to system dark mode with correct colors, contrast ratios, and brand consistency; no hardcoded light-mode colors remain.' },
+  { name: 'Image & asset rendering',        tag: 'Visual · Low',  p: '',     isNew: true,  v: 'Verify images and icons load at appropriate resolution for device DPI; no pixelated assets on retina or high-DPI displays.' },
+  { name: 'Content overflow/truncation',    tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify long text, dynamic data, and translated strings do not overflow containers or truncate without ellipsis across screen sizes.' },
+  { name: 'Bottom nav & safe areas',        tag: 'Visual · High', p: 'high', isNew: true,  v: 'Verify navigation bars, CTAs, and input fields are not obscured by device notches, home indicators, or dynamic keyboard insets.' },
+  { name: 'Cross-device UI consistency',    tag: 'Visual · Med',  p: 'mid',  isNew: true,  v: 'Verify UI appearance is consistent across Android and iOS; platform-specific differences are intentional and do not break visual hierarchy.' },
+]};
+
+_GRP.mobileFunctional = { name: 'Mobile Functional Testing', items: [
+  { name: 'Push notifications',             tag: 'Functional · High', p: 'high', isNew: false, v: 'Verify notifications are triggered, received, and handled properly across foreground, background, and killed states.' },
+  { name: 'Offline mode',                   tag: 'Functional · High', p: 'high', isNew: false, v: 'Verify app behaves correctly without internet connectivity; cached data is shown and writes sync when connection restores.' },
+  { name: 'Deep link handling',             tag: 'Functional · High', p: 'high', isNew: true,  v: 'Verify deep links and universal links navigate to the correct in-app screen with proper context; invalid deep links are handled gracefully.' },
+  { name: 'Background/foreground transitions', tag: 'Functional · High', p: 'high', isNew: true, v: 'Verify app resumes correctly after being backgrounded; pending operations complete and state is preserved without crashes or data loss.' },
+  { name: 'App update compatibility',       tag: 'Functional · High', p: 'high', isNew: true,  v: 'Verify users upgrading from the previous version retain their data, preferences, and session without forced re-authentication or data loss.' },
+  { name: 'Touch gesture support',          tag: 'Functional · Med',  p: 'mid',  isNew: true,  v: 'Verify swipe, pinch-to-zoom, long-press, and pull-to-refresh gestures function correctly and do not conflict with system gestures.' },
+  { name: 'Permissions handling',           tag: 'Functional · High', p: 'high', isNew: true,  v: 'Verify camera, microphone, and location permission dialogs appear at the correct time; app functions correctly when permissions are granted or denied.' },
+]};
+
+_GRP.deviceCompatibility = { name: 'Device Compatibility Testing', items: [
+  { name: 'Android / iOS compatibility',    tag: 'Compat · High', p: 'high', isNew: false, v: 'Verify app works across supported operating system versions and a representative device matrix covering low and high-end hardware.' },
+  { name: 'Screen resolution matrix',       tag: 'Compat · High', p: 'high', isNew: true,  v: 'Verify app renders correctly across common device resolutions; specific testing on HD, Full HD, QHD, and retina displays without distortion or cropping.' },
+  { name: 'OS version coverage',            tag: 'Compat · High', p: 'high', isNew: true,  v: 'Verify app functions correctly on the minimum supported OS version and the two most recent major releases for both Android and iOS.' },
+  { name: 'Tablet layout',                  tag: 'Compat · Med',  p: 'mid',  isNew: true,  v: 'Verify app provides an optimized or at minimum usable tablet layout; two-panel or responsive layouts function correctly on iPad and Android tablets.' },
+  { name: 'Foldable device support',        tag: 'Compat · Med',  p: 'mid',  isNew: true,  v: 'Verify app handles foldable device configurations correctly; layout adapts when device is folded, unfolded, or in half-open tent mode.' },
+]};
+
+_GRP.mobilePerformance = { name: 'Mobile Performance Testing', items: [
+  { name: 'Battery & memory usage',         tag: 'Perf · Med',  p: 'mid',  isNew: false, v: 'Verify app performance remains stable without excessive resource usage; no memory leaks or unusual battery drain in long sessions.' },
+  { name: 'App launch time',                tag: 'Perf · High', p: 'high', isNew: true,  v: 'Verify cold start and warm start times meet acceptable thresholds (cold start under 3s, warm start under 1s) on mid-range devices.' },
+  { name: 'Network transition handling',    tag: 'Perf · High', p: 'high', isNew: true,  v: 'Verify app handles transitions between WiFi, 4G, 5G, and offline states gracefully; in-flight requests retry or fail with user notification.' },
+  { name: 'Animation frame rate',           tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify UI animations maintain 60fps on target devices; Choreographer frame drops are within acceptable limits during complex transitions.' },
+  { name: 'Low memory behavior',            tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify app handles low memory conditions without crashing; foreground processes are prioritized and background tasks are correctly paused.' },
+  { name: 'Large data set rendering',       tag: 'Perf · Med',  p: 'mid',  isNew: true,  v: 'Verify list and grid views rendering large data sets (100+ items) use virtualization correctly; no frame drops or ANR events occur during fast scrolling.' },
+]};
+
+_GRP.mobileSecurity = { name: 'Mobile Security Testing', items: [
+  { name: 'Secure storage & SSL pinning',   tag: 'Security · High', p: 'high', isNew: false, v: 'Verify sensitive data and API communication are securely protected — encrypted at rest, certificate-pinned in transit.' },
+  { name: 'Data at rest encryption',        tag: 'Security · High', p: 'high', isNew: true,  v: 'Verify sensitive data stored locally (credentials, tokens, PII) is encrypted using platform APIs (Keystore/Keychain); no plain-text storage in shared preferences or SQLite.' },
+  { name: 'Jailbreak / root detection',     tag: 'Security · High', p: 'high', isNew: true,  v: 'Verify app detects rooted or jailbroken devices and restricts sensitive functionality appropriately; bypass attempts via common tools are identified.' },
+  { name: 'Sensitive data in logs',         tag: 'Security · Med',  p: 'mid',  isNew: true,  v: 'Verify application logs, crash reports, and analytics events do not contain sensitive data such as passwords, tokens, PII, or payment information.' },
+  { name: 'App Transport Security',         tag: 'Security · High', p: 'high', isNew: true,  v: 'Verify iOS ATS and Android Network Security Config are correctly configured; cleartext HTTP traffic is blocked and all connections use TLS 1.2 or higher.' },
+]};
+
+_GRP.mobileSecurityQA = { name: 'Security QA Engineering', items: [
+  { name: 'SSL pinning validation',         tag: 'Security · High', p: 'high', isNew: true, v: 'Attempt MITM with custom certificate; verify app rejects untrusted certificates and network requests fail without pinned cert.' },
+  { name: 'Android deep link validation',   tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Craft malicious deep link URIs; verify app validates intent data and rejects unauthorized navigation or data injection.' },
+  { name: 'Mobile app proxy interception',  tag: 'Security · High', p: 'high', isNew: true, v: 'Route traffic through Burp Suite or Charles; verify no sensitive data (tokens, PII) is transmitted in plain text.' },
+  { name: 'Charles / Burp traffic inspection', tag: 'Security · Med', p: 'mid', isNew: true, v: 'Inspect all API calls during login, session management, and data sync; verify tokens use HTTPS and have short expiry.' },
+  { name: 'APK tampering validation',       tag: 'Security · High', p: 'high', isNew: true, v: 'Repackage APK with modified manifest; verify app detects tampering via signature verification or integrity checks.' },
+  { name: 'Rooted device behavior testing', tag: 'Security · Med',  p: 'mid',  isNew: true, v: 'Install and run app on rooted device; verify app detects root and restricts sensitive functionality appropriately.' },
+  { name: 'Emulator detection checks',      tag: 'Security · Low',  p: '',     isNew: true, v: 'Run app in emulator environment; verify app detects emulation for production builds and alerts or restricts as configured.' },
+]};
+
+_GRP.mobileAccessibility = { name: 'Mobile Accessibility Testing', items: [
+  { name: 'VoiceOver / TalkBack compat',    tag: 'A11y · High', p: 'high', isNew: true, v: 'Verify all interactive and informational elements are accessible via iOS VoiceOver and Android TalkBack with meaningful content descriptions.' },
+  { name: 'Dynamic text size support',      tag: 'A11y · High', p: 'high', isNew: true, v: 'Verify UI accommodates the full range of iOS Dynamic Type and Android font scale settings without content truncation or layout overflow.' },
+  { name: 'Touch target sizing',            tag: 'A11y · High', p: 'high', isNew: true, v: 'Verify all interactive elements meet the minimum 44×44 pt (iOS) / 48×48 dp (Android) touch target size requirements; closely spaced targets have sufficient padding.' },
+  { name: 'Color contrast on mobile',       tag: 'A11y · Med',  p: 'mid',  isNew: true, v: 'Verify text and UI elements meet WCAG 2.1 AA contrast ratios on common device display profiles including OLED, LCD, and outdoor visibility conditions.' },
+]};
+
+_GRP.mobileInterruption = { name: 'Mobile Interruption Testing', items: [
+  { name: 'Incoming call handling',         tag: 'Interrupt · High', p: 'high', isNew: true, v: 'Verify app pauses, mutes audio, and suspends active transactions correctly when an incoming call interrupts the session; state is fully restored on return.' },
+  { name: 'Push notification interruption', tag: 'Interrupt · Med',  p: 'mid',  isNew: true, v: 'Verify tapping a push notification while the app is active navigates to the correct screen without losing current session state or causing errors.' },
+  { name: 'Background restoration',         tag: 'Interrupt · High', p: 'high', isNew: true, v: 'Verify app restores its exact previous state when brought back to the foreground after an extended background period; no crashes or blank screens.' },
+  { name: 'Low battery / storage handling', tag: 'Interrupt · Med',  p: 'mid',  isNew: true, v: 'Verify app responds gracefully to system low-battery and low-storage warnings; critical data is saved and the user is notified appropriately.' },
+]};
+
+// ─────────────────────────────────────────────
+// CHECKLIST DATA
+// ─────────────────────────────────────────────
+const CHECKLIST_DATA = {
+  static: {
+    name: 'Static Website Testing', num: '01 /05',
+    desc: 'For marketing sites, landing pages, portfolios, and content-driven brochure sites. Focus is on presentation, performance, accessibility, and discoverability.',
+    titleHtml: 'Static <em>Website</em> Testing',
+    groups: [
+      _GRP.uiDesign, _GRP.functional, _GRP.contentTesting, _GRP.seo,
+      _GRP.performance, _GRP.security, _GRP.accessibility,
+      _GRP.prodDeployQA, _GRP.advancedQA,
+    ]
+  },
+
+  dynamic: {
+    name: 'Dynamic Website Testing', num: '02 /05',
+    desc: 'Inherits all Static checks and adds database, API, session, dynamic functional, and advanced security QA. For database-driven sites with user accounts, admin panels, and backend logic.',
+    titleHtml: 'Dynamic <em>Website</em> Testing',
+    groups: [
+      _GRP.uiDesign, _GRP.functional, _GRP.contentTesting, _GRP.seo,
+      _GRP.performance, _GRP.security, _GRP.accessibility,
+      _GRP.prodDeployQA, _GRP.advancedQA,
+      _GRP.database, _GRP.api, _GRP.sessionAuth,
+      _GRP.dynamicFunctional, _GRP.advancedSecurityQA,
+    ]
+  },
+
+  ecommerce: {
+    name: 'Ecommerce Testing', num: '02.1 /05',
+    desc: 'Inherits all Dynamic checks and adds product catalog, cart, checkout, payment, and ecommerce-specific security, SEO, performance, and automation testing.',
+    titleHtml: '<em>Ecommerce</em> Testing',
+    groups: [
+      _GRP.uiDesign, _GRP.functional, _GRP.contentTesting, _GRP.seo,
+      _GRP.performance, _GRP.security, _GRP.accessibility,
+      _GRP.prodDeployQA, _GRP.advancedQA,
+      _GRP.database, _GRP.api, _GRP.sessionAuth,
+      _GRP.dynamicFunctional, _GRP.advancedSecurityQA,
+      _GRP.productTesting, _GRP.cartCheckout, _GRP.paymentOrder,
+      _GRP.ecommerceSecurity, _GRP.ecommercePerformance,
+      _GRP.ecommerceSEO, _GRP.ecommerceAutomation,
+    ]
+  },
+
+  webapp: {
+    name: 'Web Application Testing', num: '03 /05',
+    desc: 'Inherits all Dynamic checks and adds authentication, authorization, business workflow, and load and stress testing. For SaaS dashboards, internal tools, and complex business logic applications.',
+    titleHtml: 'Web <em>Application</em> Testing',
+    groups: [
+      _GRP.uiDesign, _GRP.functional, _GRP.contentTesting, _GRP.seo,
+      _GRP.performance, _GRP.security, _GRP.accessibility,
+      _GRP.prodDeployQA, _GRP.advancedQA,
+      _GRP.database, _GRP.api, _GRP.sessionAuth,
+      _GRP.dynamicFunctional, _GRP.advancedSecurityQA,
+      _GRP.authenticationTesting, _GRP.authorizationTesting,
+      _GRP.businessWorkflow, _GRP.loadStress,
+    ]
+  },
+
+  mobile: {
+    name: 'Mobile App Testing', num: '04 /05',
+    desc: 'For native and hybrid Android and iOS applications. Focus shifts to device fragmentation, OS behavior, network reliability, interruption handling, and on-device security.',
+    titleHtml: 'Mobile <em>App</em> Testing',
+    groups: [
+      _GRP.mobileUIDesign, _GRP.mobileFunctional, _GRP.deviceCompatibility,
+      _GRP.mobilePerformance, _GRP.mobileSecurity,
+      _GRP.mobileSecurityQA, _GRP.mobileAccessibility, _GRP.mobileInterruption,
+    ]
+  },
+
+};
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function escH(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escA(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function countItems(catKey) {
+  return CHECKLIST_DATA[catKey].groups.reduce((s, g) => s + g.items.length, 0);
+}
+
+// ─────────────────────────────────────────────
+// BUILD HOMEPAGE CARDS
+// ─────────────────────────────────────────────
+(function buildCards() {
+  const grid = document.getElementById('catCardsGrid');
+  const ORDER = ['static', 'dynamic', 'ecommerce', 'webapp', 'mobile'];
+  let html = '';
+  ORDER.forEach(key => {
+    const cat = CHECKLIST_DATA[key];
+    const total = countItems(key);
+    const groupNames = cat.groups.map(g => `<li>${escH(g.name)}</li>`).join('');
+    html += `
+      <div class="cat-card" onclick="openWithCategory('${key}')">
+        <div class="cat-card-num">${escH(cat.num)}</div>
+        <div class="cat-card-title">${cat.titleHtml}</div>
+        <p class="cat-card-desc">${escH(cat.desc)}</p>
+        <ul class="cat-card-groups">${groupNames}</ul>
+        <div class="cat-card-meta">
+          <div>
+            <div class="cat-card-count-num">${String(total).padStart(2,'0')}</div>
+            <div class="cat-card-count-lbl">Checks</div>
+          </div>
+          <span class="cat-card-cta">Start Audit →</span>
+        </div>
+      </div>`;
+  });
+  grid.innerHTML = html;
+})();
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let selectedCategory = null;
+let currentProject   = { name: '', tester: '' };
+
+// ─────────────────────────────────────────────
+// PROGRESS
+// ─────────────────────────────────────────────
+function updateProgress() {
+  const overlay  = document.getElementById('checklistOverlay');
+  const isOpen   = overlay.classList.contains('active');
+  const total    = isOpen ? overlay.querySelectorAll('.checkbox').length : 0;
+  const done     = isOpen ? overlay.querySelectorAll('.checkbox.checked').length : 0;
+  const pct      = total ? (done / total) * 100 : 0;
+
+  document.getElementById('progressText').textContent = `${done} / ${total}`;
+  document.getElementById('progressBar').style.width  = pct + '%';
+  document.getElementById('olProgressText').textContent = `${done} / ${total} verified`;
+  document.getElementById('olProgressBar').style.width  = pct + '%';
+
+  const pf = document.getElementById('progressFixed');
+  if (isOpen) pf.classList.add('visible'); else pf.classList.remove('visible');
+}
+
+// ─────────────────────────────────────────────
+// MODAL 1 — PROJECT FORM
+// ─────────────────────────────────────────────
+const modal       = document.getElementById('reportModal');
+const generateBtn = document.getElementById('generateBtn');
+const modalInfo   = document.getElementById('modalInfo');
+
+function openModal() {
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+function openWithCategory(catKey) {
+  document.querySelectorAll('.category-option').forEach(b => b.classList.remove('selected'));
+  const btn = document.querySelector(`.category-option[data-cat="${catKey}"]`);
+  if (btn) btn.classList.add('selected');
+  selectedCategory = catKey;
+  openModal();
+  validateForm();
+}
+
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+document.querySelectorAll('.category-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.category-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedCategory = btn.dataset.cat;
+    validateForm();
+  });
+});
+
+document.getElementById('websiteName').addEventListener('input', validateForm);
+
+function validateForm() {
+  const name = document.getElementById('websiteName').value.trim();
+  if (!name) {
+    generateBtn.disabled = true;
+    modalInfo.textContent = 'Enter a website name';
+    return;
+  }
+  if (!selectedCategory) {
+    generateBtn.disabled = true;
+    modalInfo.textContent = 'Pick a category';
+    return;
+  }
+  const total = countItems(selectedCategory);
+  modalInfo.textContent = `${total} checks in this category`;
+  generateBtn.disabled = false;
+}
+
+// ─────────────────────────────────────────────
+// CHECKLIST OVERLAY
+// ─────────────────────────────────────────────
+function openChecklist() {
+  const name   = document.getElementById('websiteName').value.trim();
+  const tester = document.getElementById('testerName').value.trim();
+  currentProject = { name, tester };
+
+  const cat = CHECKLIST_DATA[selectedCategory];
+  document.getElementById('olCatNum').textContent      = cat.num;
+  document.getElementById('olProjectName').textContent = name;
+  document.getElementById('olTitle').textContent       = cat.name;
+  document.getElementById('olSectionLabel').textContent = `— ${cat.num} · QA Checklist`;
+  document.getElementById('olSectionTitle').innerHTML  = cat.titleHtml;
+  document.getElementById('olSectionDesc').textContent = cat.desc;
+
+  renderChecklist(selectedCategory);
+  closeModal();
+
+  const overlay = document.getElementById('checklistOverlay');
+  overlay.classList.add('active');
+  overlay.querySelector('.ol-body').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  updateProgress();
+}
+
+function closeChecklist() {
+  document.getElementById('checklistOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+  updateProgress();
+}
+
+function backToForm() {
+  closeChecklist();
+  openModal();
+}
+
+// ─────────────────────────────────────────────
+// RENDER CHECKLIST
+// ─────────────────────────────────────────────
+function renderChecklist(catKey) {
+  const cat     = CHECKLIST_DATA[catKey];
+  const content = document.getElementById('checklistContent');
+  content.dataset.category     = catKey;
+  content.dataset.categoryName = cat.name;
+
+  let html = '<div class="test-groups">';
+  cat.groups.forEach(group => {
+    const countStr = `${String(group.items.length).padStart(2,'0')} ${group.items.length === 1 ? 'check' : 'checks'}`;
+    html += `<div class="test-group" data-group="${escA(group.name)}">`;
+    html += `<div class="test-group-header"><span>${escH(group.name)}</span><span class="test-group-count">${countStr}</span></div>`;
+    group.items.forEach(item => {
+      const tagCls = item.p === 'high' ? ' priority-high' : item.p === 'mid' ? ' priority-mid' : '';
+      const pill   = item.isNew ? '<span class="new-pill">New</span>' : '';
+      html += `<div class="test-row" data-item="${escA(item.name)}">`;
+      html += `<div class="test-check"><div class="checkbox"></div></div>`;
+      html += `<div class="test-what"><div class="test-what-name">${escH(item.name)}${pill}</div><div class="test-tag${tagCls}">${escH(item.tag)}</div></div>`;
+      html += `<div class="test-verify">${escH(item.v)}</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  html += '</div>';
+  content.innerHTML = html;
+
+  content.querySelectorAll('.test-row').forEach(row => {
+    row.addEventListener('click', () => {
+      row.querySelector('.checkbox').classList.toggle('checked');
+      updateProgress();
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────
+// DOWNLOAD MODAL
+// ─────────────────────────────────────────────
+const dlModal   = document.getElementById('downloadModal');
+let selectedDlCat = null;
+
+function openDownloadModal() {
+  dlModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeDownloadModal() {
+  dlModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+dlModal.addEventListener('click', e => { if (e.target === dlModal) closeDownloadModal(); });
+
+document.querySelectorAll('.dl-cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dl-cat-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedDlCat = btn.dataset.dlcat;
+    const keys = selectedDlCat === 'all' ? Object.keys(CHECKLIST_DATA) : [selectedDlCat];
+    const total = keys.reduce((s, k) => s + countItems(k), 0);
+    document.getElementById('dlModalInfo').textContent = selectedDlCat === 'all'
+      ? `${total} checks · all 5 categories`
+      : `${total} checks in this category`;
+    document.getElementById('dlBtn').disabled = false;
+  });
+});
+
+function triggerPDFDownload() {
+  if (!selectedDlCat) return;
+  if (!window.jspdf) { showToast('PDF library not loaded — refresh and retry'); return; }
+  closeDownloadModal();
+  showToast('Building PDF…');
+  setTimeout(() => {
+    try {
+      const keys = selectedDlCat === 'all' ? Object.keys(CHECKLIST_DATA) : [selectedDlCat];
+      generateChecklistPDF(keys);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      showToast('Error: ' + (err.message || 'PDF generation failed'));
+    }
+  }, 80);
+}
+
+// ─────────────────────────────────────────────
+// PDF GENERATION  (jsPDF — Helvetica, direct download)
+// ─────────────────────────────────────────────
+function generateChecklistPDF(catKeys) {
+  const { jsPDF } = window.jspdf;
+  const today = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const isAll = catKeys.length > 1;
+
+  // Site theme colours
+  const C = {
+    ink:    [14,  14,  12 ],
+    paper:  [244, 241, 234],
+    p2:     [235, 230, 219],
+    alt:    [240, 236, 228],
+    accent: [200, 69,  31 ],
+    a2:     [31,  77,  63 ],
+    muted:  [107, 103, 96 ],
+    hi:     [245, 213, 71 ],
+  };
+
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = 210, H = 297, ML = 14, MR = 14, MT = 17, MB = 14;
+  const CW = W - ML - MR;
+  // Column widths: Name 31% | Tag 19% | Verify 50%
+  const NW = CW * 0.31, TW = CW * 0.19, VW = CW * 0.50;
+
+  let pg = 1;
+  let firstPage = true;
+
+  const ink    = () => doc.setTextColor(...C.ink);
+  const muted  = () => doc.setTextColor(...C.muted);
+  const accent = () => doc.setTextColor(...C.accent);
+  const paper  = () => doc.setTextColor(...C.paper);
+  const hi     = () => doc.setTextColor(...C.hi);
+  const tagClr = p  => doc.setTextColor(...(p==='high'?C.accent:p==='mid'?C.a2:C.muted));
+
+  function newPage() {
+    doc.addPage(); pg++;
+    doc.setFillColor(...C.paper); doc.rect(0,0,W,H,'F');
+  }
+
+  function topBar() {
+    doc.setFillColor(...C.ink); doc.rect(0,0,W,13,'F');
+    doc.setFont('Helvetica','bold'); doc.setFontSize(6.8); doc.setCharSpace(0.28); paper();
+    doc.text('QA / MASTER CHECKLIST  ·  v2.1', ML, 8.8);
+    doc.text(today.toUpperCase(), W-MR, 8.8, { align:'right' });
+    doc.setCharSpace(0);
+  }
+
+  function runningHeader(label) {
+    doc.setFont('Helvetica','normal'); doc.setFontSize(6.2); doc.setCharSpace(0.28); muted();
+    doc.text(label.toUpperCase()+'  ·  QA CHECKLIST', ML, MT-5);
+    doc.text(today.toUpperCase()+'  ·  '+pg, W-MR, MT-5, { align:'right' });
+    doc.setCharSpace(0);
+    doc.setDrawColor(...C.p2); doc.setLineWidth(0.22);
+    doc.line(ML, MT-3, W-MR, MT-3);
+    return MT+1;
+  }
+
+  // ── SUMMARY PAGE ─────────────────────────────────────────────
+  function drawSummary(keys) {
+    doc.setFillColor(...C.paper); doc.rect(0,0,W,H,'F');
+    topBar();
+    let y = 30;
+
+    doc.setFont('Helvetica','bold'); doc.setFontSize(38); ink();
+    doc.text('FULL COVERAGE', ML, y);
+    y += 12;
+    doc.setFont('Helvetica','bold'); doc.setFontSize(38); accent();
+    doc.text('SUMMARY', ML, y);
+    y += 7;
+
+    const totalAll = keys.reduce((s,k)=>s+countItems(k),0);
+    doc.setFont('Helvetica','normal'); doc.setFontSize(7); doc.setCharSpace(0.28); muted();
+    doc.text('— '+keys.length+' DOMAINS  ·  '+totalAll+' TOTAL CHECKS', ML, y);
+    doc.setCharSpace(0);
+    y += 13;
+
+    // Table header
+    doc.setFillColor(...C.ink); doc.rect(ML, y, CW, 8.5, 'F');
+    doc.setFont('Helvetica','bold'); doc.setFontSize(6.5); doc.setCharSpace(0.2); paper();
+    doc.text('DOMAIN', ML+3, y+5.8);
+    doc.text('GROUPS', ML+CW*0.65, y+5.8, { align:'center' });
+    doc.text('CHECKS', ML+CW*0.84, y+5.8, { align:'center' });
+    doc.setCharSpace(0);
+    y += 8.5;
+
+    keys.forEach((k,i) => {
+      const cat = CHECKLIST_DATA[k], total = countItems(k), rH = 17;
+      doc.setFillColor(...(i%2===0?C.paper:C.p2)); doc.rect(ML,y,CW,rH,'F');
+
+      doc.setFont('Helvetica','bold'); doc.setFontSize(6.5); doc.setCharSpace(0.18); accent();
+      doc.text(cat.num, ML+3, y+5.5); doc.setCharSpace(0);
+
+      doc.setFont('Helvetica','bold'); doc.setFontSize(10.5); ink();
+      doc.text(cat.name, ML+3, y+12.5);
+
+      doc.setFont('Helvetica','bold'); doc.setFontSize(20); ink();
+      doc.text(String(cat.groups.length).padStart(2,'0'), ML+CW*0.65, y+13, { align:'center' });
+      doc.text(String(total).padStart(2,'0'),             ML+CW*0.84, y+13, { align:'center' });
+
+      doc.setDrawColor(...C.p2); doc.setLineWidth(0.18);
+      doc.line(ML, y+rH, W-MR, y+rH);
+      y += rH;
+    });
+    doc.setDrawColor(...C.ink); doc.setLineWidth(0.4); doc.line(ML,y,W-MR,y);
+    firstPage = false;
+  }
+
+  // ── COVER PAGE ───────────────────────────────────────────────
+  function drawCover(cat) {
+    if (!firstPage) newPage();
+    else { doc.setFillColor(...C.paper); doc.rect(0,0,W,H,'F'); }
+    firstPage = false;
+    topBar();
+
+    let y = 34;
+
+    doc.setFont('Helvetica','bold'); doc.setFontSize(8); doc.setCharSpace(0.32); accent();
+    doc.text('— PROFESSIONAL QA COVERAGE REPORT', ML, y);
+    doc.setCharSpace(0);
+    y += 13;
+
+    // Big title — Helvetica Bold, all caps
+    doc.setFont('Helvetica','bold'); doc.setFontSize(34); ink();
+    const titleLines = doc.splitTextToSize(cat.name.toUpperCase(), CW);
+    doc.text(titleLines, ML, y);
+    y += titleLines.length * 13 + 3;
+
+    doc.setFont('Helvetica','normal'); doc.setFontSize(9.5); doc.setCharSpace(0.32); accent();
+    doc.text(cat.num+'  ·  QA DOMAIN', ML, y);
+    doc.setCharSpace(0);
+    y += 8;
+
+    doc.setDrawColor(...C.ink); doc.setLineWidth(0.55); doc.line(ML,y,W-MR,y);
+    y += 9;
+
+    doc.setFont('Helvetica','normal'); doc.setFontSize(10.5); muted();
+    const descLines = doc.splitTextToSize(cat.desc, CW*0.88);
+    doc.text(descLines, ML, y);
+    y += descLines.length * 5.5 + 16;
+
+    // Stats strip
+    const total = countItems(cat._key);
+    const stats = [
+      { n:String(total).padStart(2,'0'),             l:'TOTAL CHECKS'   },
+      { n:String(cat.groups.length).padStart(2,'0'), l:'TEST GROUPS'    },
+      { n:cat.num.split('/')[0].trim(),              l:'DOMAIN'         },
+      { n:'100%',                                     l:'COVERAGE READY' },
+    ];
+    doc.setDrawColor(...C.ink); doc.setLineWidth(0.4); doc.line(ML,y,W-MR,y);
+    y += 3;
+    stats.forEach((st,i) => {
+      const sx = ML + i*(CW/4);
+      doc.setFont('Helvetica','bold'); doc.setFontSize(28); ink();
+      doc.text(st.n, sx, y+19);
+      doc.setFont('Helvetica','bold'); doc.setFontSize(5.5); doc.setCharSpace(0.22); muted();
+      doc.text(st.l, sx, y+26);
+      doc.setCharSpace(0);
+      if (i<3) { doc.setDrawColor(...C.ink); doc.setLineWidth(0.2); doc.line(sx+CW/4-2,y+1,sx+CW/4-2,y+28); }
+    });
+    doc.setDrawColor(...C.ink); doc.setLineWidth(0.4); doc.line(ML,y+28,W-MR,y+28);
+  }
+
+  // ── CHECKLIST PAGES ──────────────────────────────────────────
+  function drawChecklist(cat) {
+    newPage();
+    let y = runningHeader(cat.name);
+    const LINE_H = 4.0, PAD = 2.8;
+
+    cat.groups.forEach(group => {
+      if (y + 26 > H - MB) { newPage(); y = runningHeader(cat.name); }
+
+      // Group header
+      doc.setFillColor(...C.ink); doc.rect(ML,y,CW,8.5,'F');
+      doc.setFont('Helvetica','bold'); doc.setFontSize(7.5); doc.setCharSpace(0.22); paper();
+      doc.text(group.name.toUpperCase(), ML+3, y+6);
+      doc.setCharSpace(0); hi();
+      doc.text(String(group.items.length).padStart(2,'0')+' CHECKS', W-MR-3, y+6, { align:'right' });
+      y += 8.5;
+
+      // Column headers
+      doc.setFillColor(...C.p2); doc.rect(ML,y,CW,5.8,'F');
+      doc.setFont('Helvetica','bold'); doc.setFontSize(5.8); doc.setCharSpace(0.18); muted();
+      doc.text('TEST ITEM',            ML+2,      y+4);
+      doc.text('PRIORITY / TAG',       ML+NW+2,   y+4);
+      doc.text('VERIFICATION CRITERIA',ML+NW+TW+2,y+4);
+      doc.setCharSpace(0);
+      y += 5.8;
+      doc.setDrawColor(...C.ink); doc.setLineWidth(0.28); doc.line(ML,y,W-MR,y);
+
+      group.items.forEach((item,idx) => {
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8.5);
+        const nameL = doc.splitTextToSize(item.name, NW-4);
+        doc.setFont('Helvetica','normal'); doc.setFontSize(8);
+        const verL  = doc.splitTextToSize(item.v, VW-4);
+        const rowH  = Math.max(nameL.length, verL.length)*LINE_H + PAD*2;
+
+        if (y + rowH > H - MB) {
+          doc.setDrawColor(...C.ink); doc.setLineWidth(0.28); doc.line(ML,y,W-MR,y);
+          newPage(); y = runningHeader(cat.name);
+          doc.setFillColor(...C.p2); doc.rect(ML,y,CW,6,'F');
+          doc.setFont('Helvetica','bold'); doc.setFontSize(6.5); doc.setCharSpace(0.18); muted();
+          doc.text(group.name.toUpperCase()+'  (CONT.)', ML+2, y+4.4);
+          doc.setCharSpace(0); y += 6;
+          doc.setDrawColor(...C.ink); doc.setLineWidth(0.28); doc.line(ML,y,W-MR,y);
+        }
+
+        doc.setFillColor(...(idx%2===0?C.paper:C.alt)); doc.rect(ML,y,CW,rowH,'F');
+        doc.setDrawColor(...C.p2); doc.setLineWidth(0.18);
+        doc.line(ML+NW,    y, ML+NW,    y+rowH);
+        doc.line(ML+NW+TW, y, ML+NW+TW, y+rowH);
+
+        const ty = y + PAD + LINE_H*0.78;
+
+        doc.setFont('Helvetica','bold'); doc.setFontSize(8.5); ink();
+        doc.text(nameL, ML+2, ty);
+
+        doc.setFont('Helvetica','bold'); doc.setFontSize(6.8); doc.setCharSpace(0.12);
+        tagClr(item.p); doc.text(item.tag, ML+NW+2, ty);
+        doc.setCharSpace(0);
+        doc.setFont('Helvetica','normal'); doc.setFontSize(5.5); doc.setCharSpace(0.1); muted();
+        doc.text((item.p||'').toUpperCase(), ML+NW+2, ty+4); doc.setCharSpace(0);
+
+        doc.setFont('Helvetica','normal'); doc.setFontSize(8); muted();
+        doc.text(verL, ML+NW+TW+2, ty);
+
+        y += rowH;
+        doc.setDrawColor(...C.p2); doc.setLineWidth(0.15); doc.line(ML,y,W-MR,y);
+      });
+
+      doc.setDrawColor(...C.ink); doc.setLineWidth(0.28); doc.line(ML,y,W-MR,y);
+      y += 8;
+    });
+  }
+
+  // ── ASSEMBLE ─────────────────────────────────────────────────
+  if (isAll) drawSummary(catKeys);
+  catKeys.forEach(k => {
+    const cat = Object.assign({ _key:k }, CHECKLIST_DATA[k]);
+    drawCover(cat);
+    drawChecklist(cat);
+  });
+
+  const fn = isAll ? 'qa-checklist_all.pdf' : 'qa-checklist_'+catKeys[0]+'.pdf';
+  doc.save(fn);
+  showToast('✓ PDF downloaded');
+}
+
+// LEGACY STUBS (keep old helper names so nothing breaks if referenced elsewhere)
+function _pdfGroupHeader() {}
+function _pdfPageFooter() {}
+
+// ─────────────────────────────────────────────
+// PPT GENERATION
+// ─────────────────────────────────────────────
+function generatePPT() {
+  const websiteName  = currentProject.name;
+  const testerName   = currentProject.tester || '—';
+  const content      = document.getElementById('checklistContent');
+  const categoryName = content.dataset.categoryName;
+
+  const groups = [];
+  content.querySelectorAll('.test-groups > .test-group').forEach(g => {
+    const items = [];
+    g.querySelectorAll('.test-row').forEach(row => {
+      items.push({
+        name:    row.dataset.item,
+        checked: row.querySelector('.checkbox').classList.contains('checked')
+      });
+    });
+    groups.push({ name: g.dataset.group, items });
+  });
+
+  const allItems    = groups.flatMap(g => g.items);
+  const totalCount  = allItems.length;
+  const checkedCount = allItems.filter(i => i.checked).length;
+  const passPct     = totalCount ? Math.round((checkedCount / totalCount) * 100) : 0;
+
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const COLORS = {
+    ink: '0E0E0C', paper: 'F4F1EA', paper2: 'EBE6DB',
+    accent: 'C8451F', accent2: '1F4D3F', muted: '6B6760', highlight: 'F5D547'
+  };
+  const FONT_SERIF = 'Georgia';
+  const FONT_MONO  = 'Consolas';
+  const FONT_SANS  = 'Calibri';
+
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_WIDE';
+  pptx.title  = `${websiteName} — QA Report`;
+  pptx.author = testerName;
+
+  // ── COVER ──
+  const s1 = pptx.addSlide();
+  s1.background = { color: COLORS.paper };
+  s1.addShape(pptx.ShapeType.line, { x: 0.6, y: 0.5, w: 12.13, h: 0, line: { color: COLORS.ink, width: 1.5 } });
+  s1.addText('● QA / MASTER CHECKLIST · v2.1', { x: 0.6, y: 0.6, w: 8, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: COLORS.ink, bold: true, charSpacing: 3 });
+  s1.addText(today.toUpperCase(), { x: 8.6, y: 0.6, w: 4.13, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: COLORS.muted, align: 'right', charSpacing: 3 });
+  s1.addText('— PROFESSIONAL QA COVERAGE REPORT', { x: 0.6, y: 1.7, w: 10, h: 0.3, fontFace: FONT_MONO, fontSize: 10, color: COLORS.accent, bold: true, charSpacing: 3 });
+  s1.addText(websiteName, { x: 0.6, y: 2.2, w: 12.13, h: 1.7, fontFace: FONT_SERIF, fontSize: 60, color: COLORS.ink, valign: 'top' });
+  s1.addText([
+    { text: 'A ', options: { italic: false } },
+    { text: categoryName.toLowerCase(), options: { italic: true, color: COLORS.accent } },
+    { text: ' coverage report.', options: { italic: false } }
+  ], { x: 0.6, y: 3.95, w: 12, h: 0.7, fontFace: FONT_SERIF, fontSize: 30, color: COLORS.ink });
+  s1.addShape(pptx.ShapeType.line, { x: 0.6, y: 5.3, w: 12.13, h: 0, line: { color: COLORS.ink, width: 1 } });
+
+  const statY = 5.5, statH = 1.3, colW = 12.13 / 4;
+  [
+    { num: String(totalCount).padStart(2, '0'),              label: 'Total Checks' },
+    { num: String(checkedCount).padStart(2, '0'),            label: 'Verified' },
+    { num: String(totalCount - checkedCount).padStart(2,'0'), label: 'Pending' },
+    { num: passPct + '%',                                    label: 'Coverage' }
+  ].forEach((st, i) => {
+    const x = 0.6 + i * colW;
+    s1.addText(st.num, { x, y: statY, w: colW, h: 0.7, fontFace: FONT_SERIF, fontSize: 44, color: COLORS.ink });
+    s1.addText(st.label.toUpperCase(), { x, y: statY + 0.7, w: colW, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: COLORS.muted, charSpacing: 3 });
+    if (i < 3) s1.addShape(pptx.ShapeType.line, { x: x + colW - 0.05, y: statY, w: 0, h: statH, line: { color: COLORS.ink, width: 0.5 } });
+  });
+  s1.addShape(pptx.ShapeType.line, { x: 0.6, y: statY + statH, w: 12.13, h: 0, line: { color: COLORS.ink, width: 1 } });
+  s1.addText(`TESTED BY ${testerName.toUpperCase()}   ·   INTERNAL HANDOFF`, { x: 0.6, y: 7.05, w: 12.13, h: 0.3, fontFace: FONT_MONO, fontSize: 8, color: COLORS.muted, charSpacing: 3 });
+
+  // ── CONTENT SLIDES ──
+  groups.forEach((group, gi) => {
+    const slide = pptx.addSlide();
+    slide.background = { color: COLORS.paper };
+    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.5, fill: { color: COLORS.ink }, line: { color: COLORS.ink } });
+    slide.addText(`● ${websiteName.toUpperCase()} / ${categoryName.toUpperCase()}`, { x: 0.6, y: 0.1, w: 9, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: COLORS.paper, bold: true, charSpacing: 3 });
+    slide.addText(`SLIDE ${String(gi + 2).padStart(2,'0')} / ${String(groups.length + 2).padStart(2,'0')}`, { x: 9.6, y: 0.1, w: 3.13, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: COLORS.highlight, align: 'right', charSpacing: 3 });
+    slide.addText(`0${gi + 1} / ${String(groups.length).padStart(2,'0')}`, { x: 0.6, y: 0.95, w: 2, h: 0.3, fontFace: FONT_MONO, fontSize: 11, color: COLORS.accent, bold: true, charSpacing: 2 });
+    slide.addShape(pptx.ShapeType.line, { x: 0.6, y: 1.35, w: 12.13, h: 0, line: { color: COLORS.ink, width: 1 } });
+
+    const gWords = group.name.split(' ');
+    const titleParts = gWords.length > 1
+      ? [{ text: gWords[0] + ' ', options: { italic: false } }, { text: gWords.slice(1).join(' '), options: { italic: true, color: COLORS.accent } }]
+      : [{ text: group.name, options: { italic: false } }];
+    slide.addText(titleParts, { x: 0.6, y: 1.45, w: 12.13, h: 1.0, fontFace: FONT_SERIF, fontSize: 40, color: COLORS.ink });
+
+    const gDone = group.items.filter(i => i.checked).length;
+    slide.addText(`${gDone} OF ${group.items.length} VERIFIED`, { x: 0.6, y: 2.55, w: 12, h: 0.3, fontFace: FONT_MONO, fontSize: 10, color: COLORS.muted, charSpacing: 3 });
+
+    let yPos = 3.1;
+    const rowH = 0.55;
+    group.items.forEach((item, idx) => {
+      slide.addShape(pptx.ShapeType.rect, { x: 0.6, y: yPos + 0.08, w: 0.3, h: 0.3, fill: { color: item.checked ? COLORS.accent : COLORS.paper }, line: { color: COLORS.ink, width: 1.5 } });
+      if (item.checked) slide.addText('✓', { x: 0.6, y: yPos + 0.05, w: 0.3, h: 0.3, fontFace: FONT_SANS, fontSize: 14, color: COLORS.paper, bold: true, align: 'center', valign: 'middle' });
+      slide.addText(item.name, { x: 1.1, y: yPos + 0.05, w: 9, h: 0.4, fontFace: FONT_SERIF, fontSize: 18, color: COLORS.ink, valign: 'middle' });
+      slide.addText(item.checked ? 'VERIFIED' : 'PENDING', { x: 10.5, y: yPos + 0.1, w: 2.2, h: 0.3, fontFace: FONT_MONO, fontSize: 9, color: item.checked ? COLORS.accent2 : COLORS.muted, bold: true, align: 'right', charSpacing: 3, valign: 'middle' });
+      if (idx < group.items.length - 1) slide.addShape(pptx.ShapeType.line, { x: 0.6, y: yPos + rowH, w: 12.13, h: 0, line: { color: COLORS.paper2, width: 0.75, dashType: 'dash' } });
+      yPos += rowH;
+    });
+    slide.addText(`${categoryName.toUpperCase()}   ·   ${today.toUpperCase()}   ·   QA REPORT`, { x: 0.6, y: 7.1, w: 12.13, h: 0.25, fontFace: FONT_MONO, fontSize: 8, color: COLORS.muted, charSpacing: 3 });
+  });
+
+  // ── FINAL SLIDE ──
+  const sf = pptx.addSlide();
+  sf.background = { color: COLORS.ink };
+  sf.addText('— REPORT COMPLETE', { x: 0.6, y: 0.6, w: 8, h: 0.3, fontFace: FONT_MONO, fontSize: 10, color: COLORS.highlight, bold: true, charSpacing: 3 });
+  sf.addText([
+    { text: "Quality isn't a department.\n", options: { italic: false } },
+    { text: "It's the discipline of ", options: { italic: false } },
+    { text: 'caring twice', options: { italic: true, color: COLORS.highlight } },
+    { text: ' —\nonce before ship, once after.', options: { italic: false } }
+  ], { x: 0.6, y: 2.5, w: 12.13, h: 3, fontFace: FONT_SERIF, fontSize: 36, color: COLORS.paper });
+  sf.addText(`${websiteName.toUpperCase()}   ·   ${categoryName.toUpperCase()}   ·   ${today.toUpperCase()}`, { x: 0.6, y: 7.1, w: 12.13, h: 0.25, fontFace: FONT_MONO, fontSize: 8, color: 'AAA59C', charSpacing: 3 });
+
+  const safeName = websiteName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  pptx.writeFile({ fileName: `qa-report_${safeName}_${selectedCategory}.pptx` }).then(() => {
+    showToast('✓ Report downloaded');
+  });
+}
+</script>
+
+</body>
+</html>
